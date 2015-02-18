@@ -7,7 +7,7 @@ describe('The webrtc server module token auth middleware', function() {
   it('should return next() without argument if socket got a userId property', function(done) {
 
     var deps = function(name) {
-      expect(name).to.equal('socketio');
+      expect(name).to.equal('wsserver');
       return {
         helper: {
           getUserId: function(socket) {
@@ -32,7 +32,7 @@ describe('The webrtc server module token auth middleware', function() {
 
   it('should return next(err) if socket do not have a userId property', function(done) {
     var deps = function(name) {
-      expect(name).to.equal('socketio');
+      expect(name).to.equal('wsserver');
       return {
         helper: {
           getUserId: function(socket) {

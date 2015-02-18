@@ -174,7 +174,7 @@ describe('The webrtc module', function() {
       config: {
         webrtc: {}
       },
-      socketio: {
+      wsserver: {
         helper: function() {}
       },
       logger: require('../fixtures/logger-noop')()
@@ -228,7 +228,7 @@ describe('The webrtc module', function() {
       config: {
         webrtc: {}
       },
-      socketio: {
+      wsserver: {
         helper: function() {}
       },
       logger: require('../fixtures/logger-noop')()
