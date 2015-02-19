@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "awesome-module": "1.0.0",
-    "awesome-module-manager": "1.0.0",
+    "awesome-module-manager": "1.1.0",
     "easyrtc": "git+https://github.com/priologic/easyrtc.git#79c7cee0e1b3cfdc390799caa89ced491f4dbb02"
   },
   "devDependencies": {

@@ -8,7 +8,8 @@ describe('The webrtc module', function() {
   it('should contains all needed properties.', function() {
 
     var dependencies = {
-      conference: {}
+      conference: {},
+      config: function() {}
     };
 
     var deps = function(name) {
@@ -34,7 +35,8 @@ describe('The webrtc module', function() {
     });
 
     var dependencies = {
-      conference: {}
+      conference: {},
+      config: function() {}
     };
 
     var deps = function(name) {
@@ -57,7 +59,8 @@ describe('The webrtc module', function() {
     });
 
     var dependencies = {
-      conference: {}
+      conference: {},
+      config: function() {}
     };
 
     var deps = function(name) {
@@ -80,7 +83,8 @@ describe('The webrtc module', function() {
     });
 
     var dependencies = {
-      conference: {}
+      conference: {},
+      config: function() {}
     };
 
     var deps = function(name) {
@@ -103,7 +107,8 @@ describe('The webrtc module', function() {
     });
 
     var dependencies = {
-      conference: {}
+      conference: {},
+      config: function() {}
     };
 
     var deps = function(name) {
@@ -126,7 +131,8 @@ describe('The webrtc module', function() {
     });
 
     var dependencies = {
-      conference: {}
+      conference: {},
+      config: function() {}
     };
 
     var deps = function(name) {
@@ -171,8 +177,11 @@ describe('The webrtc module', function() {
           return done();
         }
       },
-      config: {
-        webrtc: {}
+      config: function() {
+        return {
+          webrtc: {
+          }
+        };
       },
       wsserver: {
         helper: function() {}
@@ -225,8 +234,11 @@ describe('The webrtc module', function() {
           return done();
         }
       },
-      config: {
-        webrtc: {}
+      config: function() {
+        return {
+          webrtc: {
+          }
+        };
       },
       wsserver: {
         helper: function() {}
