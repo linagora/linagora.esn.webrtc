@@ -143,8 +143,16 @@ module.exports = function(grunt) {
 
   grunt.loadTasks('tasks');
 
-  grunt.registerTask('test-unit-backend', ['run_grunt:unit_backend']);
-  grunt.registerTask('test', ['linters', 'run_grunt:unit_backend']);
+  grunt.registerTask('clean-environment', 'Clean test environment', function() {
+    var testsFailed = !grunt.config.get('esn.tests.success');
+    if (testsFailed) {
+      grunt.log.writeln('Tests failure');
+      grunt.fail.fatal('error', 3);
+    }
+  });
+
+  grunt.registerTask('test-unit-backend', ['run_grunt:unit_backend', 'clean-environment']);
+  grunt.registerTask('test', ['linters', 'run_grunt:unit_backend', 'clean-environment']);
   grunt.registerTask('linters', 'Check code for lint', ['jshint:all', 'gjslint:all', 'lint_pattern:all']);
 
   /**
