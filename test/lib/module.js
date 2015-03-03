@@ -148,7 +148,7 @@ describe('The webrtc module', function() {
     });
   });
 
-  it('should call conference.join when someone joins an easyrtc room', function(done) {
+  it('should call conference.onRoomJoin when someone joins an easyrtc room', function(done) {
     var events = require('events');
     var eventEmitter = new events.EventEmitter();
 
@@ -173,7 +173,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {
-        join: function() {
+        onRoomJoin: function() {
           return done();
         }
       },
@@ -204,7 +204,7 @@ describe('The webrtc module', function() {
     });
   });
 
-  it('should call conference.leave when someone leaves an easyrtc room', function(done) {
+  it('should call conference.onRoomLeave when someone leaves an easyrtc room', function(done) {
     var events = require('events');
     var eventEmitter = new events.EventEmitter();
 
@@ -230,7 +230,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {
-        leave: function() {
+        onRoomLeave: function() {
           return done();
         }
       },
