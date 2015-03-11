@@ -261,4 +261,81 @@ describe('The webrtc module', function() {
       });
     });
   });
+
+  describe('Regexp Options', function() {
+
+    function mockContext(webrtc) {
+
+      var dependencies = {
+        conference: {
+        },
+        config: function() {
+          return {
+            webrtc: webrtc
+          };
+        },
+        wsserver: {
+          helper: function() {}
+        },
+        logger: require('../fixtures/logger-noop')()
+      };
+
+      var deps = function(name) {
+        return dependencies[name];
+      };
+
+      var server = require('../../lib/module')(deps);
+
+      return {
+        dependencies: dependencies,
+        server: server
+      };
+    }
+
+    it('should use the usernameRegExp define in configuration when defined', function(done) {
+
+      var regexp = '^(.){1,64}$';
+
+      mockery.registerMock('easyrtc', {
+        listen: function(webserver, wsserver, options, callback) {
+          expect(options).to.exist;
+          expect(options.usernameRegExp).to.exist;
+          expect(options.usernameRegExp.toString()).to.equal('/' + regexp + '/i');
+          return done();
+        },
+
+        events: {
+          on: function() {}
+        }
+      });
+
+      var mock = mockContext({usernameRegExp: regexp});
+      mock.server.start({}, {}, function() {
+        return done(new Error());
+      });
+    });
+
+    it('should use the roomNameRegExp define in configuration when defined', function(done) {
+
+      var regexp = '^(.){1,64}$';
+
+      mockery.registerMock('easyrtc', {
+        listen: function(webserver, wsserver, options, callback) {
+          expect(options).to.exist;
+          expect(options.roomNameRegExp).to.exist;
+          expect(options.roomNameRegExp.toString()).to.equal('/' + regexp + '/i');
+          return done();
+        },
+
+        events: {
+          on: function() {}
+        }
+      });
+
+      var mock = mockContext({roomNameRegExp: regexp});
+      mock.server.start({}, {}, function() {
+        return done(new Error());
+      });
+    });
+  });
 });
