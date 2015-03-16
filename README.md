@@ -10,7 +10,7 @@ Here is a list of available options :
 
  * enabled : enable webrtc module (Boolean [default : undefined])
  * loglevel : specifies log level (String [default: "info"])
- * appIceServers : Array of STUN/TURN servers to use (Array [default: undefined])
+ * appIceServers : Array of STUN/TURN servers to use (Array [default: []])
 
 If enabled is undefined, webrtc module is disabled.
 
