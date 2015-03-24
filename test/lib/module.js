@@ -262,6 +262,60 @@ describe('The webrtc module', function() {
     });
   });
 
+  describe('The log event', function() {
+    it('should call the logger', function(done) {
+
+      var logLevel = 'info';
+      var logArgs = [1, 2, 3];
+      var logMessage = 'The log message';
+
+      var events = require('events');
+      var eventEmitter = new events.EventEmitter();
+      var pub = {
+        events: {
+          defaultListeners: {
+          }
+        }
+      };
+
+      mockery.registerMock('easyrtc', {
+        listen: function(web, ws, options, callback) {
+          return callback(null, pub);
+        },
+        events: eventEmitter
+      });
+
+      var dependencies = {
+        config: function() {
+          return {
+            webrtc: {
+            }
+          };
+        },
+        wsserver: {
+          helper: function() {}
+        },
+        logger: {
+          log: function(level, pattern, message, args) {
+            expect(level).to.equal(logLevel);
+            expect(message).to.equal(logMessage);
+            expect(args).to.equal(logArgs);
+          }
+        }
+      };
+
+      var deps = function(name) {
+        return dependencies[name];
+      };
+
+      var server = require('../../lib/module')(deps);
+      server.start({}, {}, function(err) {
+        expect(err).to.not.exist;
+        eventEmitter.emit('log', logLevel, logMessage, logArgs, done);
+      });
+    });
+  });
+
   describe('Regexp Options', function() {
 
     function mockContext(webrtc) {
