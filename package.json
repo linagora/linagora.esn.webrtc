@@ -16,7 +16,7 @@
   "dependencies": {
     "awesome-module": "1.0.0",
     "awesome-module-manager": "1.1.0",
-    "easyrtc": "1.0.13"
+    "easyrtc": "git+https://github.com/linagora/easyrtc.git#setRemoteDescription"
   },
   "devDependencies": {
     "chai": "~1.9.2",
