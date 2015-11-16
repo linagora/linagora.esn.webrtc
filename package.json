@@ -1,6 +1,6 @@
 {
   "name": "om-webrtc-backend",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "WebRTC Awesome Module",
   "main": "lib/index.js",
   "repository": {
