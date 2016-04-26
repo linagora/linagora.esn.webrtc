@@ -9,6 +9,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {},
+      connector: {lib: {adapter: function() {}}},
       config: function() {}
     };
 
@@ -27,7 +28,7 @@ describe('The webrtc module', function() {
     expect(server.start).to.be.a.Function;
   });
 
-  it('should not call easyrtc#listen when already started', function(done) {
+  it('should not call webrtc#listen when already started', function(done) {
     mockery.registerMock('easyrtc', {
       listen: function() {
         return done(new Error());
@@ -36,6 +37,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {},
+      connector: {lib: {adapter: function() {}}},
       config: function() {}
     };
 
@@ -51,7 +53,7 @@ describe('The webrtc module', function() {
 
   });
 
-  it('should not call easyrtc#listen when webserver is not defined', function(done) {
+  it('should not call webrtc#listen when webserver is not defined', function(done) {
     mockery.registerMock('easyrtc', {
       listen: function() {
         return done(new Error());
@@ -60,6 +62,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {},
+      connector: {lib: {adapter: function() {}}},
       config: function() {}
     };
 
@@ -75,7 +78,7 @@ describe('The webrtc module', function() {
     });
   });
 
-  it('should not call easyrtc#listen when websocket server is not defined', function(done) {
+  it('should not call webrtc#listen when websocket server is not defined', function(done) {
     mockery.registerMock('easyrtc', {
       listen: function() {
         return done(new Error());
@@ -84,6 +87,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {},
+      connector: {lib: {adapter: function() {}}},
       config: function() {}
     };
 
@@ -99,7 +103,7 @@ describe('The webrtc module', function() {
     });
   });
 
-  it('should send back error when easyrtc#listen fails', function(done) {
+  it('should send back error when webrtc#listen fails', function(done) {
     mockery.registerMock('easyrtc', {
       listen: function(web, ws, options, callback) {
         return callback(new Error());
@@ -108,6 +112,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {},
+      connector: {lib: {adapter: function() {}}},
       config: function() {}
     };
 
@@ -123,7 +128,7 @@ describe('The webrtc module', function() {
     });
   });
 
-  it('should be started when easyrtc#listen is ok', function(done) {
+  it('should be started when webrtc#listen is ok', function(done) {
     mockery.registerMock('easyrtc', {
       listen: function(web, ws, options, callback) {
         return callback(null, {});
@@ -132,6 +137,7 @@ describe('The webrtc module', function() {
 
     var dependencies = {
       conference: {},
+      connector: {lib: {adapter: function() {}}},
       config: function() {}
     };
 
@@ -148,63 +154,7 @@ describe('The webrtc module', function() {
     });
   });
 
-  it('should call conference.onRoomJoin when someone joins an easyrtc room', function(done) {
-    var events = require('events');
-    var eventEmitter = new events.EventEmitter();
-
-    var pub = {
-      events: {
-        defaultListeners: {
-          roomJoin: function(connectionObj, roomName, roomParameter, callback) {
-            return callback();
-          }
-        }
-      }
-    };
-    pub.events._eventListener = eventEmitter;
-    pub.events.emit = pub.events._eventListener.emit.bind(pub.events._eventListener);
-
-    mockery.registerMock('easyrtc', {
-      listen: function(web, ws, options, callback) {
-        return callback(null, pub);
-      },
-      events: pub.events._eventListener
-    });
-
-    var dependencies = {
-      conference: {
-        onRoomJoin: function() {
-          return done();
-        }
-      },
-      config: function() {
-        return {
-          webrtc: {
-          }
-        };
-      },
-      wsserver: {
-        helper: function() {}
-      },
-      logger: require('../fixtures/logger-noop')()
-    };
-
-    var deps = function(name) {
-      return dependencies[name];
-    };
-
-    var server = require('../../lib/module')(deps);
-    server.start({}, {}, function(err) {
-      expect(err).to.not.exist;
-      eventEmitter.emit('roomJoin', {
-        getUsername: function() {
-        }
-      }, 'myroom', {}, function() {
-      });
-    });
-  });
-
-  it('should call conference.onRoomLeave when someone leaves an easyrtc room', function(done) {
+  it('should call conference.onRoomLeave when someone leaves an webrtc room', function(done) {
     var events = require('events');
     var eventEmitter = new events.EventEmitter();
 
@@ -234,6 +184,11 @@ describe('The webrtc module', function() {
           return done();
         }
       },
+      connector: {
+        lib: {
+          adapter: function() {}
+        }
+      },
       config: function() {
         return {
           webrtc: {
@@ -254,7 +209,7 @@ describe('The webrtc module', function() {
     //server.started = true;
     server.start({}, {}, function(err) {
       expect(err).to.not.exist;
-      eventEmitter.emit('roomLeave', {
+      eventEmitter.emit('room:leave', {
         getUsername: function() {
         }
       }, 'myroom', {}, function() {
@@ -292,6 +247,7 @@ describe('The webrtc module', function() {
             }
           };
         },
+        connector: {lib: {adapter: function() {}}},
         wsserver: {
           helper: function() {}
         },
@@ -328,6 +284,7 @@ describe('The webrtc module', function() {
             webrtc: webrtc
           };
         },
+        connector: {lib: {adapter: function() {}}},
         wsserver: {
           helper: function() {}
         },
