@@ -23,7 +23,8 @@ describe('The WebRTCServer module', function() {
         debug: function() {}
       },
       conference: {
-        onRoomJoin: function() {}
+        onRoomJoin: function() {},
+        onRoomLeave: function() {}
       },
       connector: {
         lib: {
@@ -52,14 +53,21 @@ describe('The WebRTCServer module', function() {
     });
   });
 
-  describe('In the room:join event', function() {
-    it('should call conference.onRoomJoin when someone joins an webrtc room', function(done) {
+  it('should call conference.onRoomJoin when someone joins an webrtc room', function(done) {
 
-      new WebRTCServer(dependencies, adapterMock);
-      adapterMock.events.emit('room:join', {getUsername: function() {}}, 'myroom', {});
-      expect(deps.conference.onRoomJoin).to.be.called;
-      done();
-    });
+    new WebRTCServer(dependencies, adapterMock);
+    adapterMock.events.emit('room:join', {getUsername: function() {}}, 'myroom', {});
+    expect(deps.conference.onRoomJoin).to.be.called;
+    done();
+  });
+
+
+  it('should call conference.onRoomLeave when someone leaves an webrtc room', function(done) {
+
+    new WebRTCServer(dependencies, adapterMock);
+    adapterMock.events.emit('room:leave', {getUsername: function() {}}, 'myroom', {});
+    expect(deps.conference.onRoomJoin).to.be.called;
+    done();
   });
 
 });

@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect,
   mockery = require('mockery');
+ var events = require('events');
 
 describe('The webrtc module', function() {
 
@@ -154,127 +155,14 @@ describe('The webrtc module', function() {
     });
   });
 
-  it('should call conference.onRoomLeave when someone leaves an webrtc room', function(done) {
-    var events = require('events');
-    var eventEmitter = new events.EventEmitter();
-
-    var pub = {
-      events: {
-        defaultListeners: {
-          roomLeave: function(connectionObj, roomName, next) {
-            return next();
-          }
-        }
-      }
-    };
-    pub.events._eventListener = eventEmitter;
-    pub.events.emit = pub.events._eventListener.emit.bind(pub.events._eventListener);
-
-    mockery.registerMock('easyrtc', {
-      listen: function(web, ws, options, callback) {
-        return callback(null, pub);
-      },
-      events: pub.events._eventListener
-    });
-
-
-    var dependencies = {
-      conference: {
-        onRoomLeave: function() {
-          return done();
-        }
-      },
-      connector: {
-        lib: {
-          adapter: function() {}
-        }
-      },
-      config: function() {
-        return {
-          webrtc: {
-          }
-        };
-      },
-      wsserver: {
-        helper: function() {}
-      },
-      logger: require('../fixtures/logger-noop')()
-    };
-
-    var deps = function(name) {
-      return dependencies[name];
-    };
-
-    var server = require('../../lib/module')(deps);
-    //server.started = true;
-    server.start({}, {}, function(err) {
-      expect(err).to.not.exist;
-      eventEmitter.emit('room:leave', {
-        getUsername: function() {
-        }
-      }, 'myroom', {}, function() {
-      });
-    });
-  });
-
-  describe('The log event', function() {
-    it('should call the logger', function(done) {
-
-      var logLevel = 'info';
-      var logArgs = [1, 2, 3];
-      var logMessage = 'The log message';
-
-      var events = require('events');
-      var eventEmitter = new events.EventEmitter();
-      var pub = {
-        events: {
-          defaultListeners: {
-          }
-        }
-      };
-
-      mockery.registerMock('easyrtc', {
-        listen: function(web, ws, options, callback) {
-          return callback(null, pub);
-        },
-        events: eventEmitter
-      });
-
-      var dependencies = {
-        config: function() {
-          return {
-            webrtc: {
-            }
-          };
-        },
-        connector: {lib: {adapter: function() {}}},
-        wsserver: {
-          helper: function() {}
-        },
-        logger: {
-          log: function(level, pattern, message, args) {
-            expect(level).to.equal(logLevel);
-            expect(message).to.equal(logMessage);
-            expect(args).to.equal(logArgs);
-          }
-        }
-      };
-
-      var deps = function(name) {
-        return dependencies[name];
-      };
-
-      var server = require('../../lib/module')(deps);
-      server.start({}, {}, function(err) {
-        expect(err).to.not.exist;
-        eventEmitter.emit('log', logLevel, logMessage, logArgs, done);
-      });
-    });
-  });
-
   describe('Regexp Options', function() {
 
     function mockContext(webrtc) {
+
+      function AdapterMock() {
+        this.events = new events.EventEmitter();
+      }
+      AdapterMock.prototype.listen = function() {};
 
       var dependencies = {
         conference: {
@@ -284,13 +172,17 @@ describe('The webrtc module', function() {
             webrtc: webrtc
           };
         },
-        connector: {lib: {adapter: function() {}}},
+        connector: {
+          lib: {
+            adapter: AdapterMock,
+            auth: function() {}
+          }
+        },
         wsserver: {
           helper: function() {}
         },
         logger: require('../fixtures/logger-noop')()
       };
-
       var deps = function(name) {
         return dependencies[name];
       };
@@ -303,22 +195,22 @@ describe('The webrtc module', function() {
       };
     }
 
+    function WebRTCServer() {
+        this.events = new events.EventEmitter();
+    }
+
     it('should use the usernameRegExp define in configuration when defined', function(done) {
 
       var regexp = '^(.){1,64}$';
 
-      mockery.registerMock('easyrtc', {
-        listen: function(webserver, wsserver, options, callback) {
-          expect(options).to.exist;
-          expect(options.usernameRegExp).to.exist;
-          expect(options.usernameRegExp.toString()).to.equal('/' + regexp + '/i');
-          return done();
-        },
+      WebRTCServer.prototype.listen = function(webserver, wsserver, options, callback) {
+        expect(options).to.exist;
+        expect(options.usernameRegExp).to.exist;
+        expect(options.usernameRegExp.toString()).to.equal('/' + regexp + '/i');
+        return done();
+      };
 
-        events: {
-          on: function() {}
-        }
-      });
+      mockery.registerMock('./WebRTCServer', WebRTCServer);
 
       var mock = mockContext({usernameRegExp: regexp});
       mock.server.start({}, {}, function() {
@@ -330,18 +222,14 @@ describe('The webrtc module', function() {
 
       var regexp = '^(.){1,64}$';
 
-      mockery.registerMock('easyrtc', {
-        listen: function(webserver, wsserver, options, callback) {
-          expect(options).to.exist;
-          expect(options.roomNameRegExp).to.exist;
-          expect(options.roomNameRegExp.toString()).to.equal('/' + regexp + '/i');
-          return done();
-        },
+      WebRTCServer.prototype.listen = function(webserver, wsserver, options, callback) {
+        expect(options).to.exist;
+        expect(options.roomNameRegExp).to.exist;
+        expect(options.roomNameRegExp.toString()).to.equal('/' + regexp + '/i');
+        return done();
+      };
 
-        events: {
-          on: function() {}
-        }
-      });
+      mockery.registerMock('./WebRTCServer', WebRTCServer);
 
       var mock = mockContext({roomNameRegExp: regexp});
       mock.server.start({}, {}, function() {
