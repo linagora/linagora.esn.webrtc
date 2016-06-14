@@ -15,8 +15,7 @@
   ],
   "dependencies": {
     "awesome-module": "1.0.0",
-    "awesome-module-manager": "1.1.0",
-    "easyrtc": "1.0.15"
+    "awesome-module-manager": "1.1.0"
   },
   "devDependencies": {
     "chai": "~1.9.2",
