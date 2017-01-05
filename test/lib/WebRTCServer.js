@@ -61,7 +61,6 @@ describe('The WebRTCServer module', function() {
     done();
   });
 
-
   it('should call conference.onRoomLeave when someone leaves an webrtc room', function(done) {
 
     new WebRTCServer(dependencies, adapterMock);
@@ -70,4 +69,37 @@ describe('The WebRTCServer module', function() {
     done();
   });
 
+  describe('on iceconfig event', function() {
+
+    it('should send back empty array when no options are defined', function(done) {
+      new WebRTCServer(dependencies, adapterMock);
+      adapterMock.events.emit('iceconfig', {}, function(err, config) {
+        expect(err).to.be.null;
+        expect(config).to.deep.equals([]);
+        done();
+      });
+    });
+
+    it('should send back empty array when not defined in options', function(done) {
+      new WebRTCServer(dependencies, adapterMock, {});
+      adapterMock.events.emit('iceconfig', {}, function(err, config) {
+        expect(err).to.be.null;
+        expect(config).to.deep.equals([]);
+        done();
+      });
+    });
+
+    it('should send back ice config when defined in options', function(done) {
+      var options = {
+        appIceServers: ['stun', 'turn']
+      };
+
+      new WebRTCServer(dependencies, adapterMock, options);
+      adapterMock.events.emit('iceconfig', {}, function(err, config) {
+        expect(err).to.be.null;
+        expect(config).to.deep.equals(options.appIceServers);
+        done();
+      });
+    });
+  });
 });
