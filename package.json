@@ -1,11 +1,11 @@
 {
-  "name": "om-webrtc-backend",
+  "name": "linagora.esn.webrtc",
   "version": "0.0.8",
   "description": "WebRTC Awesome Module",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://ci.open-paas.org/stash/scm/om/om-webrtc.git"
+    "url": "https://github.com/linagora/linagora.esn.webrtc.git"
   },
   "keywords": [
     "webrtc",
