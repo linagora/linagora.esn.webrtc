@@ -44,8 +44,8 @@ describe('The webrtc server module token auth middleware', function() {
 
     var authmw = require('../../../lib/auth/token')(deps);
 
-    authmw({}, null, null, null, null, null, function(arg) {
-      expect(arg).to.be.an('object');
+    authmw({}, null, null, null, null, null, function(err) {
+      expect(err).to.be.an('Error');
       done();
     });
   });
