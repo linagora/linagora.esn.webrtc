@@ -203,7 +203,7 @@ describe('The webrtc module', function() {
 
       var regexp = '^(.){1,64}$';
 
-      WebRTCServer.prototype.listen = function(webserver, wsserver, options, callback) {
+      WebRTCServer.prototype.listen = function(webserver, wsserver, options) {
         expect(options).to.exist;
         expect(options.usernameRegExp).to.exist;
         expect(options.usernameRegExp.toString()).to.equal('/' + regexp + '/i');
@@ -222,7 +222,7 @@ describe('The webrtc module', function() {
 
       var regexp = '^(.){1,64}$';
 
-      WebRTCServer.prototype.listen = function(webserver, wsserver, options, callback) {
+      WebRTCServer.prototype.listen = function(webserver, wsserver, options) {
         expect(options).to.exist;
         expect(options.roomNameRegExp).to.exist;
         expect(options.roomNameRegExp.toString()).to.equal('/' + regexp + '/i');

@@ -5,8 +5,6 @@
  * @param {object} grunt
  */
 module.exports = function(grunt) {
-  var CI = grunt.option('ci');
-
   var testArgs = (function() {
     var opts = ['test', 'chunk'];
     var args = {};
@@ -37,8 +35,8 @@ module.exports = function(grunt) {
         ]
       },
       quick: {
-        src: [],
-      },
+        src: []
+      }
     },
     lint_pattern: {
       options: {

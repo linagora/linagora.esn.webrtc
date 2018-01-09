@@ -10,7 +10,7 @@ describe('The webrtc server module token auth middleware', function() {
       expect(name).to.equal('wsserver');
       return {
         helper: {
-          getUserId: function(socket) {
+          getUserId: function() {
             return 1;
           }
         }
@@ -35,7 +35,7 @@ describe('The webrtc server module token auth middleware', function() {
       expect(name).to.equal('wsserver');
       return {
         helper: {
-          getUserId: function(socket) {
+          getUserId: function() {
             return null;
           }
         }
