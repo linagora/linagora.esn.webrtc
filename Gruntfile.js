@@ -26,12 +26,7 @@ module.exports = function(grunt) {
         separator: ';'
       }
     },
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: CI && 'checkstyle',
-        reporterOutput: CI ? CI : 'jshint.xml'
-      },
+    eslint: {
       all: {
         src: [
           'Gruntfile.js',
@@ -42,29 +37,8 @@ module.exports = function(grunt) {
         ]
       },
       quick: {
-        // You must run the prepare-quick-lint target before jshint:quick,
-        // files are filled in dynamically.
-        src: []
-      }
-    },
-    gjslint: {
-      options: {
-        flags: [
-          '--disable 0110',
-          '--jsdoc',
-          '-e test/frontend/karma-include'
-        ],
-        reporter: {
-          name: CI ? 'gjslint_xml' : 'console',
-          dest: CI ? 'gjslint.xml' : undefined
-        }
+        src: [],
       },
-      all: {
-        src: ['<%= jshint.all.src %>']
-      },
-      quick: {
-        src: ['<%= jshint.quick.src %>']
-      }
     },
     lint_pattern: {
       options: {
@@ -73,10 +47,10 @@ module.exports = function(grunt) {
         ]
       },
       all: {
-        src: ['<%= jshint.all.src %>']
+        src: ['<%= eslint.all.src %>']
       },
       quick: {
-        src: ['<%= jshint.quick.src %>']
+        src: ['<%= eslint.quick.src %>']
       }
     },
     run_grunt: {
@@ -138,11 +112,10 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-gjslint');
   grunt.loadNpmTasks('@linagora/grunt-run-grunt');
   grunt.loadNpmTasks('@linagora/grunt-lint-pattern');
   grunt.loadNpmTasks('grunt-release');
@@ -159,14 +132,14 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test-unit-backend', ['run_grunt:unit_backend', 'clean-environment']);
   grunt.registerTask('test', ['linters', 'run_grunt:unit_backend', 'clean-environment']);
-  grunt.registerTask('linters', 'Check code for lint', ['jshint:all', 'gjslint:all', 'lint_pattern:all']);
+  grunt.registerTask('linters', 'Check code for lint', ['eslint:all', 'lint_pattern:all']);
 
   /**
    * Usage:
    *   grunt linters-dev              # Run linters against files changed in git
    *   grunt linters-dev -r 51c1b6f   # Run linters against a specific changeset
    */
-  grunt.registerTask('linters-dev', 'Check changed files for lint', ['prepare-quick-lint', 'jshint:quick', 'gjslint:quick', 'lint_pattern:quick']);
+  grunt.registerTask('linters-dev', 'Check changed files for lint', ['prepare-quick-lint', 'eslint:quick', 'lint_pattern:quick']);
 
   grunt.registerTask('default', ['test']);
 };
