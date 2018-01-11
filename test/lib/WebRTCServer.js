@@ -1,7 +1,9 @@
 'use strict';
 
-var expect = require('chai').expect;
-var events = require('events');
+const { expect } = require('chai');
+const events = require('events');
+const mockery = require('mockery');
+const FakeWebRTCAdapter = require('../fixtures/adapter');
 
 describe('The WebRTCServer module', function() {
   var deps;
@@ -11,6 +13,12 @@ describe('The WebRTCServer module', function() {
   function dependencies(name) {
     return deps[name];
   }
+
+  beforeEach(function() {
+    mockery.registerMock('./registry', {
+      get: () => ({WebRTCAdapter: FakeWebRTCAdapter})
+    });
+  });
 
   beforeEach(function() {
     WebRTCServer = require('../../lib/WebRTCServer');
@@ -81,7 +89,7 @@ describe('The WebRTCServer module', function() {
     });
 
     it('should send back empty array when not defined in options', function(done) {
-      new WebRTCServer(dependencies, adapterMock, {});
+      new WebRTCServer(dependencies, adapterMock, null, {});
       adapterMock.events.emit('iceconfig', {}, function(err, config) {
         expect(err).to.be.null;
         expect(config).to.deep.equals([]);
@@ -94,7 +102,7 @@ describe('The WebRTCServer module', function() {
         appIceServers: ['stun', 'turn']
       };
 
-      new WebRTCServer(dependencies, adapterMock, options);
+      new WebRTCServer(dependencies, adapterMock, null, options);
       adapterMock.events.emit('iceconfig', {}, function(err, config) {
         expect(err).to.be.null;
         expect(config).to.deep.equals(options.appIceServers);
