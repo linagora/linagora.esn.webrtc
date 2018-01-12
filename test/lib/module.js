@@ -1,32 +1,36 @@
 'use strict';
 
-var expect = require('chai').expect,
-  mockery = require('mockery');
- var events = require('events');
+const expect = require('chai').expect;
+const mockery = require('mockery');
+const events = require('events');
+const FakeWebRTCAdapter = require('../fixtures/adapter');
 
 describe('The webrtc module', function() {
+  beforeEach(function() {
+    mockery.registerMock('./registry', {
+      get: () => ({WebRTCAdapter: FakeWebRTCAdapter})
+    });
+  });
 
   it('should contains all needed properties.', function() {
-
-    var dependencies = {
+    const dependencies = {
       conference: {},
       connector: {lib: {adapter: function() {}}},
       config: function() {}
     };
-
-    var deps = function(name) {
+    const deps = function(name) {
       return dependencies[name];
     };
+    const server = require('../../lib/module')(deps);
 
-    var server = require('../../lib/module')(deps);
-    expect(server).to.exist;
-    expect(server).to.be.an.Object;
-    expect(server).to.have.property('pub');
-    expect(server.pub).to.be.null;
-    expect(server).to.have.property('started');
-    expect(server.started).to.be.false;
-    expect(server).to.have.property('start');
-    expect(server.start).to.be.a.Function;
+    expect(server.webrtcserver).to.exist;
+    expect(server.webrtcserver).to.be.an.Object;
+    expect(server.webrtcserver).to.have.property('pub');
+    expect(server.webrtcserver.pub).to.be.null;
+    expect(server.webrtcserver).to.have.property('started');
+    expect(server.webrtcserver.started).to.be.false;
+    expect(server.webrtcserver).to.have.property('start');
+    expect(server.webrtcserver.start).to.be.a.Function;
   });
 
   it('should not call webrtc#listen when already started', function(done) {
