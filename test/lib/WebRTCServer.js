@@ -80,6 +80,12 @@ describe('The WebRTCServer module', function() {
   describe('on iceconfig event', function() {
 
     it('should send back empty array when no options are defined', function(done) {
+      deps['esn-config'] = () => ({
+        get: function(callback) {
+          callback();
+        }
+      });
+
       new WebRTCServer(dependencies, adapterMock);
       adapterMock.events.emit('iceconfig', {}, function(err, config) {
         expect(err).to.be.null;
@@ -89,6 +95,12 @@ describe('The WebRTCServer module', function() {
     });
 
     it('should send back empty array when not defined in options', function(done) {
+      deps['esn-config'] = () => ({
+        get: function(callback) {
+          callback(null, {});
+        }
+      });
+
       new WebRTCServer(dependencies, adapterMock, null, {});
       adapterMock.events.emit('iceconfig', {}, function(err, config) {
         expect(err).to.be.null;
@@ -98,14 +110,18 @@ describe('The WebRTCServer module', function() {
     });
 
     it('should send back ice config when defined in options', function(done) {
-      var options = {
-        appIceServers: ['stun', 'turn']
-      };
+      const servers = ['stun', 'turn'];
 
-      new WebRTCServer(dependencies, adapterMock, null, options);
+      deps['esn-config'] = () => ({
+        get: function(callback) {
+          callback(null, {servers});
+        }
+      });
+
+      new WebRTCServer(dependencies, adapterMock, null, {});
       adapterMock.events.emit('iceconfig', {}, function(err, config) {
         expect(err).to.be.null;
-        expect(config).to.deep.equals(options.appIceServers);
+        expect(config).to.deep.equals(servers);
         done();
       });
     });
